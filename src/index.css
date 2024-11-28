@@ -1,0 +1,214 @@
+:root {
+    font-family: "Noto Serif", serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color: #411624;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --orange-2: #fff2e6;
+    --orange-5: #f59237;
+    --grey-2: #fbfbfb;
+    --grey-5: #3d3b3b;
+
+    --pink-0: #f2d8e5;
+    --pink-1: #e8b9d0;
+    --br: 5px;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100%;
+    margin: 0;
+}
+
+button {
+    background: none;
+    border: 1px solid var(--orange-5);
+    color: var(--orange-2);
+    font-size: 3em;
+    padding: 0.75em 2.5em;
+    border-top-left-radius: 0.25em;
+    border-bottom-right-radius: 0.25em;
+    position: relative;
+    transform: skewX(-7deg);
+    text-align: right;
+    z-index: 999;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: var(--orange-5);
+}
+
+button:hover {
+    cursor: pointer;
+    background: var(--orange-2);
+    color: var(--orange-5);
+    transition: ease-out 175ms;
+}
+
+button::after {
+    content: "˃˃";
+    margin-left: 0.5em;
+    position: relative;
+    top: 0.15em;
+}
+
+form {
+    display: grid;
+    grid-template-areas: "login" "token" "sign" "instructions";
+    width: 100%;
+}
+
+pre {
+    background: var(--orange-2);
+    border-radius: 0.3em;
+    color: var(--orange-5);
+    font-size: 0.9em;
+    margin: 0;
+    padding: 1em 1.5em;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+label {
+    border-radius: var(--br);
+    color: var(--orange-5);
+    display: inline-block;
+    font-size: 2em;
+    font-weight: 400;
+    margin: 0;
+}
+
+p {
+    color: var(--orange-5);
+    font-family: "Noto Serif";
+    font-size: 1.5em;
+    letter-spacing: -0.01em;
+    max-width: 26em;
+}
+
+.fields {
+    position: relative;
+    padding: 2em;
+    overflow: hidden;
+}
+
+.fields:hover {
+    cursor: pointer;
+}
+
+.fields:nth-child(1) {
+    background: var(--grey-5);
+    grid-area: login;
+}
+
+.fields:nth-child(2) {
+    background: var(--pink-0);
+    grid-area: token;
+}
+
+.fields:nth-child(3) {
+    background: var(--grey-5);
+    grid-area: sign;
+}
+
+.fields:nth-child(4) {
+    background: var(--grey-2);
+    grid-area: instructions;
+    gap: 16px;
+}
+
+.fields::after {
+    display: block;
+    bottom: -0.55em;
+    right: 0.25em;
+    color: transparent;
+    font-size: 9em;
+    font-style: italic;
+    margin: 0;
+    position: absolute;
+    white-space: nowrap;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: var(--orange-5);
+}
+
+.fields:nth-child(1)::after {
+    content: "login";
+}
+
+.fields:nth-child(2)::after {
+    content: "token";
+}
+
+.fields:nth-child(3)::after {
+    content: "sign";
+}
+
+.fields:nth-child(4)::after {
+    content: "submit";
+}
+
+.field {
+    display: flex;
+    align-items: bottom;
+}
+
+.disabled {
+    font-style: italic;
+}
+
+.disabled > input {
+    font-style: italic;
+    text-decoration: line-through;
+}
+
+.disabled > input:hover {
+    cursor: not-allowed;
+}
+
+input {
+    background: transparent;
+    border: 1px solid;
+    border-color: transparent transparent var(--orange-5) transparent;
+    color: var(--orange-5);
+    font-family: "Noto Sans";
+    font-size: 1.5em;
+    padding: 1em;
+    width: 16em;
+    z-index: 999;
+}
+
+.fields:nth-child(1) > .field > input::placeholder {
+    color: var(--pink-1);
+}
+
+input::placeholder {
+    color: var(--orange-5);
+    font-family: "Noto Serif";
+    font-style: italic;
+    font-weight: 700;
+}
+
+@media (min-width: 1024px) {
+    form {
+        grid-template-areas:
+            "login instructions instructions"
+            "token instructions instructions"
+            "sign instructions instructions";
+        height: 100%;
+    }
+
+    button {
+        position: absolute;
+        bottom: 3em;
+        right: 1.5em;
+    }
+}
