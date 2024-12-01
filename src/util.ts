@@ -1,6 +1,15 @@
 import * as encoding from "@std/encoding";
 import { FormState, LocalStorage, PlcOperation } from "./types";
 
+function base64UrlDecode(value: string): Uint8Array {
+  const m = value.length % 4;
+  return Uint8Array.from(atob(
+    value.replace(/-/g, '+')
+      .replace(/_/g, '/')
+      .padEnd(value.length + (m === 0 ? 0 : 4 - m), '=')
+  ), c => c.charCodeAt(0))
+}
+
 const login = async (formState: FormState): Promise<LocalStorage> => {
   const { handle, password } = formState;
   const url = "https://bsky.social/xrpc/com.atproto.server.createSession";
@@ -88,8 +97,9 @@ const sign = async ({
   pld.push(pubkey_array[64] % 2 ? 3 : 2);
   pld.push(...pubkey_array.slice(1, 33));
 
-  const pkeyBytes = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
-  const pkey = window.btoa(String.fromCharCode(...new Uint8Array(pkeyBytes)));
+  const pkeyJwk = await crypto.subtle.exportKey("jwk", keyPair.privateKey);
+  const pkeyBytes = base64UrlDecode(pkeyJwk.d!)
+  const pkey = pkeyBytes.reduce((a, b) => a + b.toString(16).padStart(2, '0'), '')
 
   save(`pkey_${did}.txt`, pkey);
   const didKey = "z" + encoding.encodeBase58(new Uint8Array(pld));
