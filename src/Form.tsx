@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FIELD_NAMES, PLACEHOLDER_STRING } from "./constants";
+import { FIELD_NAMES, NON_SELF_HOSTED, PLACEHOLDER_STRING } from "./constants";
 import { login, request, sign, submit } from "./util";
 import { FormState } from "./types";
 
@@ -15,6 +15,7 @@ const Form: FC = () => {
     defaultValues: {
       handle: "",
       password: "",
+      pds: NON_SELF_HOSTED,
       token: "",
     },
   });
@@ -107,6 +108,17 @@ const Form: FC = () => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="fields">
+          <div
+            className={`field ${isLoggedIn ? "disabled" : ""} ${errors.errors[FIELD_NAMES.PDS] ? "error" : ""} `}
+          >
+            <input
+              {...register(FIELD_NAMES.PDS, { required: true })}
+              disabled={isLoggedIn}
+              placeholder="pds"
+              aria-label="PDS"
+              aria-invalid={errors.errors[FIELD_NAMES.PDS] ? "true" : "false"}
+            />
+          </div>
           <div
             className={`field ${isLoggedIn ? "disabled" : ""} ${errors.errors[FIELD_NAMES.HANDLE] ? "error" : ""} `}
           >

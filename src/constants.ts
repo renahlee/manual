@@ -1,5 +1,6 @@
 const FIELD_NAMES = {
   HANDLE: "handle",
+  PDS: "pds",
   PW: "password",
   TOKEN: "token",
 } as const;
@@ -25,4 +26,6 @@ const PLACEHOLDER_STRING = `{
   }
 }`;
 
-export { FIELD_NAMES, PLACEHOLDER_STRING };
+const NON_SELF_HOSTED = "bsky.social";
+
+export { FIELD_NAMES, NON_SELF_HOSTED, PLACEHOLDER_STRING };

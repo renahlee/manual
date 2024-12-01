@@ -1,18 +1,23 @@
 import * as encoding from "@std/encoding";
 import { FormState, LocalStorage, PlcOperation } from "./types";
+import { NON_SELF_HOSTED } from "./constants";
 
 function base64UrlDecode(value: string): Uint8Array {
   const m = value.length % 4;
-  return Uint8Array.from(atob(
-    value.replace(/-/g, '+')
-      .replace(/_/g, '/')
-      .padEnd(value.length + (m === 0 ? 0 : 4 - m), '=')
-  ), c => c.charCodeAt(0))
+  return Uint8Array.from(
+    atob(
+      value
+        .replace(/-/g, "+")
+        .replace(/_/g, "/")
+        .padEnd(value.length + (m === 0 ? 0 : 4 - m), "="),
+    ),
+    (c) => c.charCodeAt(0),
+  );
 }
 
 const login = async (formState: FormState): Promise<LocalStorage> => {
-  const { handle, password } = formState;
-  const url = "https://bsky.social/xrpc/com.atproto.server.createSession";
+  const { handle, password, pds } = formState;
+  const url = `https://${pds}/xrpc/com.atproto.server.createSession`;
 
   const credentials = {
     identifier: handle,
@@ -29,13 +34,16 @@ const login = async (formState: FormState): Promise<LocalStorage> => {
 
   const json = await response.json();
 
+  const pdsServiceUrl =
+    (json.didDoc?.service ?? []).length > 0
+      ? `${json.didDoc?.service[0].serviceEndpoint}/xrpc`
+      : "";
+
   return {
     accessJwt: json.accessJwt,
     did: json.did,
     pdsServiceUrl:
-      (json.didDoc?.service ?? []).length > 0
-        ? `${json.didDoc?.service[0].serviceEndpoint}/xrpc`
-        : "",
+      pds === NON_SELF_HOSTED ? pdsServiceUrl : `https://${pds}/xrpc`,
   };
 };
 
@@ -98,10 +106,13 @@ const sign = async ({
   pld.push(...pubkey_array.slice(1, 33));
 
   const pkeyJwk = await crypto.subtle.exportKey("jwk", keyPair.privateKey);
-  const pkeyBytes = base64UrlDecode(pkeyJwk.d!)
-  const pkey = pkeyBytes.reduce((a, b) => a + b.toString(16).padStart(2, '0'), '')
+  const pkeyBytes = base64UrlDecode(pkeyJwk.d!);
+  const pkey = pkeyBytes.reduce(
+    (a, b) => a + b.toString(16).padStart(2, "0"),
+    "",
+  );
 
-  save(`pkey_${did}.txt`, pkey);
+  save(`nistp256_${did}.txt`, pkey);
   const didKey = "z" + encoding.encodeBase58(new Uint8Array(pld));
 
   const body = {
